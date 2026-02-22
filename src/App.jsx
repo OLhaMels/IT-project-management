@@ -94,7 +94,7 @@ function App() {
                             className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
                             onClick={() => setFilter('all')}
                         >
-                            Усі ({total})
+                            Усі завдання ({total})
                         </button>
                         <button
                             className={`filter-btn ${filter === 'active' ? 'active' : ''}`}
