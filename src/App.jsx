@@ -166,9 +166,26 @@ function App() {
             {/* Sidebar */}
             <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <h1 className="app-logo">
+                    <h1 className="app-logo" style={{ display: 'flex', alignItems: 'center' }}>
                         <span className="material-icons logo-icon">check_circle</span>
-                        TaskFlow
+                        To Do List
+                        {import.meta.env.VITE_APP_STATUS && (
+                            <span 
+                                className="app-status-badge" 
+                                style={{ 
+                                    fontSize: '10px', 
+                                    marginLeft: '8px', 
+                                    padding: '2px 6px', 
+                                    borderRadius: '4px', 
+                                    background: 'var(--primary-color, #4f46e5)', 
+                                    color: 'white',
+                                    fontWeight: 'normal',
+                                    lineHeight: '1'
+                                }}
+                            >
+                                {import.meta.env.VITE_APP_STATUS}
+                            </span>
+                        )}
                     </h1>
                     <ThemeToggle theme={theme} onToggle={toggleTheme} />
                 </div>
