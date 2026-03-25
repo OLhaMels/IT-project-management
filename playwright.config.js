@@ -10,7 +10,7 @@ export default defineConfig({
         screenshot: 'only-on-failure',
     },
     webServer: {
-        command: process.env.CI ? 'npm run preview' : 'npm run dev',
+        command: process.env.CI ? 'node node_modules/vite/bin/vite.js preview' : 'npm run dev',
         port: process.env.CI ? 4173 : 5173,
         reuseExistingServer: !process.env.CI,
     },
