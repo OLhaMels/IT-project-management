@@ -10,10 +10,9 @@ export default defineConfig({
         screenshot: 'only-on-failure',
     },
     webServer: {
-        command: 'npm run dev',
-        port: 5173,
-        timeout: 10000,
-        reuseExistingServer: true,
+        command: process.env.CI ? 'npm run preview' : 'npm run dev',
+        port: process.env.CI ? 4173 : 5173,
+        reuseExistingServer: !process.env.CI,
     },
     projects: [
         {
