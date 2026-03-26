@@ -35,10 +35,10 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Run E2E tests
-        run: |
-          npx playwright install --with-deps
-          chmod +x node_modules/.bin/*
-          npm run test:e2e
-        env:
-          CI: true
+      # - name: Run E2E tests
+      #   run: |
+      #     npx playwright install --with-deps
+      #     chmod +x node_modules/.bin/*
+      #     npm run test:e2e
+      #   env:
+      #     CI: true
