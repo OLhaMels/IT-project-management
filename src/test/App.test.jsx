@@ -159,7 +159,7 @@ describe('Редагування задачі', () => {
         await user.type(editInput, 'Новий текст{Enter}')
         //Adding some text to check gate quality 
         // Assertion: текст оновився
-        expect(screen.getByText('Новий текст')).toBeInTheDocument()
+        expect(screen.getByText('Новиййййййfdgdfg текст')).toBeInTheDocument()
         expect(screen.queryByText('Старий текст')).not.toBeInTheDocument()
     })
 })
