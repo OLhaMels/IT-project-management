@@ -61,8 +61,8 @@ describe('Додавання задачі', () => {
         await user.type(input, 'Купити молоко')
         await user.click(getAddButton())
 
-        // Assertion: задача з'явилась у DOM
-        expect(screen.getByText('Купити молоко')).toBeInTheDocument()
+        // Assertion: задача з'явилась у DOM (ЦЕЙ ТЕСТ МАЄ ВПАСТИ ДЛЯ ПЕРЕВІРКИ PIPELINE)
+        expect(screen.getByText('ЦЕЙ ТЕСТ МАЄ ВПАСТИ')).toBeInTheDocument()
         // Assertion: інпут очистився після додавання
         expect(input.value).toBe('')
     })
