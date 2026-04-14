@@ -1,6 +1,9 @@
+[![CI/CD Pipeline](https://github.com/OLhaMels/IT-project-management/actions/workflows/main.yml/badge.svg)](https://github.com/OLhaMels/IT-project-management/actions/workflows/main.yml)
 # 📝 To-Do List
 
 A modern, clean To-Do List app built with **React** and **Vite**.
+
+[**🌐 Live Demo**](https://it-project-management-five.vercel.app/)
 
 ## ✨ Features
 
