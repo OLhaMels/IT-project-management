@@ -62,7 +62,7 @@ describe('Додавання задачі', () => {
         await user.click(getAddButton())
 
 
-        expect(screen.getByText('ЦЕЙ ТЕСТ МАЄ ВПАСТИ')).toBeInTheDocument()
+        expect(screen.getByText('Купити молоко')).toBeInTheDocument()
 
         expect(input.value).toBe('')
     })
