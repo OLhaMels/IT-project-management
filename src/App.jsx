@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { usePostHog, useFeatureFlagEnabled } from '@posthog/react'
+import * as Sentry from '@sentry/react'
 import TaskItem from './components/TaskItem'
 import TaskForm from './components/TaskForm'
 import CalendarWidget from './components/CalendarWidget'
@@ -64,6 +65,21 @@ function App() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const posthog = usePostHog()
     const showUrgentFilter = useFeatureFlagEnabled('show-urgent-filter')
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    const handleLogin = () => {
+        setIsLoggedIn(true)
+        Sentry.setUser({
+            id: "12345",
+            email: "student@example.com",
+            segment: "premium_user"
+        })
+    }
+
+    const handleLogout = () => {
+        setIsLoggedIn(false)
+        Sentry.setUser(null)
+    }
 
     useEffect(() => {
         localStorage.setItem('todo-tasks', JSON.stringify(tasks))
@@ -272,6 +288,32 @@ function App() {
                         <span className="stat-label">Активних</span>
                     </div>
                 </div>
+
+                {/* Sentry Test Button */}
+                <div className="sidebar-section" style={{ padding: '0 20px 20px' }}>
+                    <button 
+                        onClick={() => {
+                            throw new Error("Sentry Test Error: Something went wrong!");
+                        }}
+                        style={{
+                            background: '#e11d48',
+                            color: 'white',
+                            padding: '10px 12px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            width: '100%',
+                            justifyContent: 'center',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        <span className="material-icons" style={{ fontSize: '18px' }}>bug_report</span>
+                        Break the world
+                    </button>
+                </div>
             </aside>
 
             {/* Overlay for mobile */}
@@ -283,6 +325,17 @@ function App() {
                     <div>
                         <h2 className="date-title">{formatDateLabel(selectedDate)}</h2>
                         <p className="date-subtitle">{selectedDate}</p>
+                    </div>
+                    
+                    <div style={{ marginLeft: 'auto', marginRight: '20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        {isLoggedIn ? (
+                            <>
+                                <span style={{ fontSize: '12px', color: 'gray' }}>student@example.com</span>
+                                <button onClick={handleLogout} className="filter-btn" style={{ padding: '4px 10px' }}>Вийти</button>
+                            </>
+                        ) : (
+                            <button onClick={handleLogin} className="filter-btn active" style={{ padding: '4px 10px' }}>Увійти</button>
+                        )}
                     </div>
                     {total > 0 && (
                         <div className="header-progress">
