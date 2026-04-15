@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { usePostHog, useFeatureFlagEnabled } from '@posthog/react'
 import TaskItem from './components/TaskItem'
 import TaskForm from './components/TaskForm'
 import CalendarWidget from './components/CalendarWidget'
@@ -61,6 +62,8 @@ function App() {
     })
     const [dragId, setDragId] = useState(null)
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const posthog = usePostHog()
+    const showUrgentFilter = useFeatureFlagEnabled('show-urgent-filter')
 
     useEffect(() => {
         localStorage.setItem('todo-tasks', JSON.stringify(tasks))
@@ -79,16 +82,34 @@ function App() {
 
     const addTask = (task) => {
         setTasks([...tasks, task])
+        posthog?.capture('task_created', {
+            priority: task.priority || 'high',
+            category: task.category || 'work',
+            is_authenticated: true,
+        })
     }
 
     const toggleTask = (id) => {
-        setTasks(tasks.map(task =>
-            task.id === id ? { ...task, completed: !task.completed } : task
-        ))
+        setTasks(tasks.map(task => {
+            if (task.id === id) {
+                const isCompleted = !task.completed
+                if (isCompleted) {
+                    posthog?.capture('task_completed', {
+                        // Рахуємо приблизний час виконання на основі ID, який є Date.now() створення, або 120s
+                        time_to_complete_seconds: task.id ? Math.floor((Date.now() - task.id) / 1000) : 120,
+                    })
+                }
+                return { ...task, completed: isCompleted }
+            }
+            return task
+        }))
     }
 
     const deleteTask = (id) => {
         setTasks(tasks.filter(task => task.id !== id))
+        posthog?.capture('task_deleted', {
+            reason: 'mistake',
+        })
     }
 
     const editTask = (id, newText) => {
@@ -134,6 +155,8 @@ function App() {
         let result = tasks.filter(t => t.date === selectedDate)
         if (filter === 'active') result = result.filter(t => !t.completed)
         if (filter === 'done') result = result.filter(t => t.completed)
+        if (filter === 'urgent') result = result.filter(t => t.priority === 'high' && !t.completed)
+        
         if (selectedCategory !== 'all') {
             result = result.filter(t => t.category === selectedCategory)
         }
@@ -170,14 +193,14 @@ function App() {
                         <span className="material-icons logo-icon">check_circle</span>
                         To Do List
                         {import.meta.env.VITE_APP_STATUS && (
-                            <span 
-                                className="app-status-badge" 
-                                style={{ 
-                                    fontSize: '10px', 
-                                    marginLeft: '8px', 
-                                    padding: '2px 6px', 
-                                    borderRadius: '4px', 
-                                    background: 'var(--primary-color, #4f46e5)', 
+                            <span
+                                className="app-status-badge"
+                                style={{
+                                    fontSize: '10px',
+                                    marginLeft: '8px',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: 'var(--primary-color, #4f46e5)',
                                     color: 'white',
                                     fontWeight: 'normal',
                                     lineHeight: '1'
@@ -306,6 +329,13 @@ function App() {
                             onClick={() => setFilter('done')}>
                             Виконані ({done})
                         </button>
+                        {showUrgentFilter && (
+                            <button className={`filter-btn ${filter === 'urgent' ? 'active' : ''}`}
+                                onClick={() => setFilter('urgent')}
+                                style={{ color: '#e11d48', borderColor: filter === 'urgent' ? '#e11d48' : 'transparent', backgroundColor: filter === 'urgent' ? '#ffe4e6' : 'transparent' }}>
+                                🔥 Термінові
+                            </button>
+                        )}
                     </div>
                 )}
 
